@@ -1,5 +1,6 @@
 import React from 'react';
 import {graphql} from 'react-apollo';
+import {hashHistory} from 'react-router';
 
 
 import AuthForm from './AuthForm';
@@ -14,6 +15,16 @@ class LoginForm extends React.Component {
       errors: []
     }
   }
+
+  componentWillUpdate(nextProps){
+    // this.props is the old props prior to Update
+    // nextProps is the new props that compoent will rerender with
+    //console.log({old: this.props, update: nextProps});
+    if (!this.props.data.currentUser && nextProps.data.currentUser ) {
+      hashHistory.push('/dashboard');
+    }
+  }
+
   handleLogin({email, password}){
     this.props.mutate({
       variables:{
@@ -37,4 +48,6 @@ class LoginForm extends React.Component {
   }
 }
 
-export default graphql(login)(LoginForm);
+export default graphql(currentUser)(
+  graphql(login)(LoginForm)
+);
